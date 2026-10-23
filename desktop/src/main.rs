@@ -20,7 +20,7 @@ const RADIUS: f64 = 10.0;
 // opacity are the shell page's background: --glass in shell/index.html
 const BLUR_RADIUS: i32 = 30;
 
-const ZOOM_STEP: f64 = 0.1;
+const ZOOM_STEP: f64 = 0.05;
 const ZOOM_MIN: f64 = 0.5;
 const ZOOM_MAX: f64 = 3.0;
 
@@ -236,8 +236,9 @@ fn main() {
         }
         let mut level = zoom.lock().unwrap();
         *level = match event.id().as_ref() {
-          "zoom_in" => (*level + ZOOM_STEP).min(ZOOM_MAX),
-          "zoom_out" => (*level - ZOOM_STEP).max(ZOOM_MIN),
+          // Rounded to whole percents, so repeated 5% steps do not drift (0.95000000001)
+          "zoom_in" => ((*level + ZOOM_STEP) * 100.0).round().min(ZOOM_MAX * 100.0) / 100.0,
+          "zoom_out" => ((*level - ZOOM_STEP) * 100.0).round().max(ZOOM_MIN * 100.0) / 100.0,
           "zoom_reset" => 1.0,
           _ => return,
         };
