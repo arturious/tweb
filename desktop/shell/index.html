@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* --glass is the tint over the blurred background (blur radius: BLUR_RADIUS in main.rs).
+       Its alpha is the opacity: 0 fully see-through, 1 solid */
+    :root {
+      --glass: rgba(236, 236, 238, .55);
+      --fg: #3f3f46; --hover: rgba(0, 0, 0, .06); --pressed: rgba(0, 0, 0, .11);
+      --focus: rgba(10, 132, 255, .7);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --glass: rgba(22, 22, 24, .55);
+        --fg: #d4d4d8; --hover: rgba(255, 255, 255, .08); --pressed: rgba(255, 255, 255, .14);
+      }
+    }
+    html, body { margin: 0; height: 100%; background: var(--glass); overflow: hidden; }
+    /* 40px = TOPBAR in main.rs: its middle line is the traffic lights' (20pt from the top) */
+    #topbar {
+      height: 40px; display: flex; align-items: center;
+      /* The zoom button ends at 72pt; 12pt gap after it */
+      padding-left: 84px;
+      -webkit-user-select: none; cursor: default;
+    }
+    /* macOS toolbar proportions: 6px of air above and below in the 40px bar */
+    .tb-button {
+      width: 30px; height: 28px; display: grid; place-items: center;
+      border: 0; border-radius: 7px; padding: 0; outline: none;
+      background: transparent; color: var(--fg);
+      transition: background-color .12s ease-out;
+    }
+    .tb-button:hover { background: var(--hover); }
+    .tb-button:active { background: var(--pressed); transition: none; }
+    .tb-button:focus-visible { box-shadow: 0 0 0 2px var(--focus); }
+    .tb-button svg { width: 18px; height: 18px; }
+    .tb-button + .tb-button { margin-left: 2px; }
+    #home { margin-left: 10px; }
+    #reload .icon-stop, #reload.is-loading .icon-reload { display: none; }
+    #reload.is-loading .icon-stop { display: block; }
+  </style>
+</head>
+<body>
+  <div id="topbar" data-tauri-drag-region>
+    <button class="tb-button" data-nav="back" title="Back (⌘[)" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 5l-7 7 7 7"/>
+      </svg>
+    </button>
+    <button class="tb-button" data-nav="forward" title="Forward (⌘])" aria-label="Forward">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+    <button class="tb-button" id="reload" data-nav="reload" title="Reload (⌘R)" aria-label="Reload">
+      <svg class="icon-reload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66"/>
+        <path d="M20 4v5h-5"/>
+      </svg>
+      <svg class="icon-stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6 6 18"/>
+      </svg>
+    </button>
+    <button class="tb-button" id="home" title="Home" aria-label="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 10.5 12 3l9 7.5"/>
+        <path d="M5 9.5V20h5v-6h4v6h5V9.5"/>
+      </svg>
+    </button>
+  </div>
+  <script>
+    const invoke = window.__TAURI_INTERNALS__.invoke;
+    const reload = document.getElementById('reload');
+
+    document.getElementById('home').addEventListener('click', () => invoke('go_home'));
+    document.querySelectorAll('[data-nav]').forEach((button) => {
+      button.addEventListener('click', () => invoke('navigate', {action: button.dataset.nav}));
+    });
+
+    // Called from Rust on Telegram's page load start/finish: reload ⇄ stop
+    window.setLoading = (loading) => {
+      reload.classList.toggle('is-loading', loading);
+      reload.dataset.nav = loading ? 'stop' : 'reload';
+      reload.title = loading ? 'Stop' : 'Reload (⌘R)';
+      reload.setAttribute('aria-label', loading ? 'Stop' : 'Reload');
+    };
+  </script>
+</body>
+</html>

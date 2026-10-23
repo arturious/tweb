@@ -1,0 +1,42 @@
+{
+  "fill" : {
+    "solid" : "extended-gray:0.25000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "extended-srgb:0.20000,0.56500,0.92500,1.00000"
+          },
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "plane.svg",
+          "name" : "plane",
+          "position" : {
+            "scale" : 20,
+            "translation-in-points" : [
+              -14,
+              4
+            ]
+          }
+        }
+      ],
+      "lighting" : "combined",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.4
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : [
+      "macOS"
+    ]
+  }
+}

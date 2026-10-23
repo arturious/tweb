@@ -1,0 +1,10 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "telegram",
+  "description": "Telegram Web may only show a system notification and set the Dock badge; nothing else in Tauri",
+  "webviews": ["tg"],
+  "remote": {
+    "urls": ["http://127.0.0.1:47800/*", "http://localhost:8080/*"]
+  },
+  "permissions": ["allow-notify", "allow-set-badge"]
+}

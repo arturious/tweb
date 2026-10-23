@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>gramm</string>
+  <key>CFBundleDisplayName</key>
+  <string>gramm</string>
+  <key>CFBundleIdentifier</key>
+  <string>dev.arturious.tg</string>
+  <key>CFBundleExecutable</key>
+  <string>gramm</string>
+  <key>CFBundleIconFile</key>
+  <string>gramm</string>
+  <!-- The Liquid Glass icon in Assets.car (icons/gramm.icon) -->
+  <key>CFBundleIconName</key>
+  <string>gramm</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>0.1.0</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>14.0</string>
+  <key>LSApplicationCategoryType</key>
+  <string>public.app-category.social-networking</string>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+  <!-- Messages and calls must keep arriving while the window is in the background -->
+  <key>NSAppSleepDisabled</key>
+  <true/>
+  <key>NSCameraUsageDescription</key>
+  <string>gramm uses the camera for video calls and video messages.</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>gramm uses the microphone for calls and voice messages.</string>
+</dict>
+</plist>

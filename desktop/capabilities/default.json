@@ -1,0 +1,15 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "shell",
+  "description": "The local top bar: moves the window and drives the Telegram webview",
+  "windows": ["shell"],
+  "webviews": ["shell"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-internal-toggle-maximize",
+    "allow-go-home",
+    "allow-navigate"
+  ]
+}
