@@ -14,7 +14,11 @@ use tauri::{
 // AppKit then centres them 20pt from the top, so a 40pt bar shares their middle line
 const TOPBAR: f64 = 40.0;
 const INSET: f64 = 8.0;
-const RADIUS: f64 = 10.0;
+// The corner radius macOS 26 gives windows with a toolbar. This transparent window would
+// otherwise get a tighter one, so its frame is rounded to it (set_window_corner_radius)
+const WINDOW_RADIUS: f64 = 26.0;
+// Telegram's card is concentric with the window: the window's radius less the inset
+const RADIUS: f64 = WINDOW_RADIUS - INSET;
 
 // Blur of what is behind the window, in points (0 turns it off). Its tint and
 // opacity are the shell page's background: --glass in shell/index.html
@@ -171,6 +175,7 @@ fn main() {
         unsafe {
           add_compact_toolbar(ns_window.cast());
           set_background_blur(ns_window.cast(), BLUR_RADIUS);
+          set_window_corner_radius(ns_window.cast(), WINDOW_RADIUS);
           disable_app_nap();
         }
       }
@@ -312,6 +317,27 @@ unsafe fn disable_app_nap() {
   ];
   // Never ended: retained so it lives as long as the process
   let _: *mut AnyObject = msg_send![activity, retain];
+}
+
+// A transparent window is not clipped by AppKit's own corner shape, so its corners come
+// from the layer of the window's frame view: rounded here to `radius` with the continuous
+// curve macOS windows use. The shadow is then rebuilt from the new outline
+#[cfg(target_os = "macos")]
+unsafe fn set_window_corner_radius(ns_window: *mut objc2::runtime::AnyObject, radius: f64) {
+  use objc2::{msg_send, runtime::AnyObject};
+  use objc2_foundation::NSString;
+
+  let content: *mut AnyObject = msg_send![ns_window, contentView];
+  let frame: *mut AnyObject = msg_send![content, superview];
+  let _: () = msg_send![frame, setWantsLayer: true];
+  let layer: *mut AnyObject = msg_send![frame, layer];
+  if !layer.is_null() {
+    let continuous = NSString::from_str("continuous");
+    let _: () = msg_send![layer, setCornerRadius: radius];
+    let _: () = msg_send![layer, setCornerCurve: &*continuous];
+    let _: () = msg_send![layer, setMasksToBounds: true];
+  }
+  let _: () = msg_send![ns_window, invalidateShadow];
 }
 
 #[cfg(target_os = "macos")]
